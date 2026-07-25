@@ -219,6 +219,30 @@ button:active { transform: scale(0.98); }
   gap: 10px;
 }
 
+.tarjeta-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn-editar {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1;
+}
+.btn-editar:hover { color: var(--accent); background: var(--surface-raised); }
+
+.tarjeta.editando { border: 0.5px solid var(--border); }
+
 .badge {
   display: inline-block;
   font-family: var(--font-mono);

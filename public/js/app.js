@@ -11,6 +11,7 @@ const PESOS_POR_DEFECTO = { precio: 3, trayecto: 3, regimen: 3, ganas: 3 };
 
 let pesos = { ...PESOS_POR_DEFECTO };
 let destinos = [];
+let editandoId = null;
 
 const docViaje = db.collection('viaje').doc('compartido');
 let escribiendo = false;
@@ -142,6 +143,33 @@ function filaTrayecto(d) {
   </div>`;
 }
 
+function tarjetaEdicion(d) {
+  return `
+    <div class="tarjeta editando">
+      <div class="form-grid">
+        <input type="text" id="edit-nombre-${d.id}" placeholder="Hotel o destino" value="${d.nombre}">
+        <input type="text" id="edit-ciudad-${d.id}" placeholder="Ciudad o dirección" value="${d.ciudad}">
+        <input type="number" id="edit-precio-${d.id}" placeholder="Precio total (€)" value="${d.precio}">
+        <input type="number" id="edit-noches-${d.id}" placeholder="Noches" value="${d.noches}">
+        <select id="edit-regimen-${d.id}">
+          <option value="1" ${d.regimen == 1 ? 'selected' : ''}>Solo desayuno</option>
+          <option value="2" ${d.regimen == 2 ? 'selected' : ''}>Media pensión</option>
+          <option value="3" ${d.regimen == 3 ? 'selected' : ''}>Pensión completa</option>
+        </select>
+        <input type="text" id="edit-enlace-${d.id}" placeholder="Enlace de reserva (opcional)" value="${d.enlace || ''}">
+      </div>
+      <div class="slider-row">
+        <label>Ganas / ambiente <span id="edit-ganas-out-${d.id}">${d.ganas}</span>/5</label>
+        <input type="range" id="edit-ganas-${d.id}" min="1" max="5" step="1" value="${d.ganas}"
+          oninput="document.getElementById('edit-ganas-out-${d.id}').textContent = this.value;">
+      </div>
+      <div class="tarjeta-acciones">
+        <button class="btn-primary" onclick="guardarEdicion(${d.id})">Guardar</button>
+        <button class="btn-borrar" onclick="cancelarEdicion()">Cancelar</button>
+      </div>
+    </div>`;
+}
+
 function render() {
   renderPesos();
   const ranked = calcularPuntuaciones();
@@ -152,7 +180,9 @@ function render() {
     return;
   }
 
-  el.innerHTML = ranked.map((d, i) => `
+  el.innerHTML = ranked.map((d, i) => {
+    if (d.id === editandoId) return tarjetaEdicion(d);
+    return `
     <div class="tarjeta ${i === 0 ? 'top' : ''}">
       ${i === 0 ? '<span class="badge">Mejor opción</span><br>' : ''}
       <div class="tarjeta-cabecera">
@@ -160,7 +190,10 @@ function render() {
           <p class="tarjeta-nombre">${d.nombre}</p>
           <p class="tarjeta-ciudad">${d.ciudad}</p>
         </div>
-        <div class="puntuacion">${d.score}<small>/100</small></div>
+        <div class="tarjeta-header-right">
+          <button class="btn-editar" onclick="editar(${d.id})" aria-label="Editar destino" title="Editar">✎</button>
+          <div class="puntuacion">${d.score}<small>/100</small></div>
+        </div>
       </div>
       <p class="tarjeta-meta">${d.precio} € total · ${d.noches} noches · ${regimenLabel(d.regimen)}</p>
       ${filaTrayecto(d)}
@@ -169,13 +202,57 @@ function render() {
         ${d.enlace ? `<a href="${d.enlace}" target="_blank">Reserva</a>` : ''}
         <button class="btn-borrar" onclick="eliminar(${d.id})">Quitar</button>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function eliminar(id) {
   destinos = destinos.filter((d) => d.id !== id);
   guardar();
   render();
+}
+
+function editar(id) {
+  editandoId = id;
+  render();
+}
+
+function cancelarEdicion() {
+  editandoId = null;
+  render();
+}
+
+function guardarEdicion(id) {
+  const destino = destinos.find((d) => d.id === id);
+  if (!destino) return;
+
+  const nombre = document.getElementById(`edit-nombre-${id}`).value.trim();
+  const ciudad = document.getElementById(`edit-ciudad-${id}`).value.trim();
+  const precio = parseFloat(document.getElementById(`edit-precio-${id}`).value);
+  if (!nombre || !ciudad || isNaN(precio)) return;
+
+  const ciudadCambiada = ciudad !== destino.ciudad;
+
+  destino.nombre = nombre;
+  destino.ciudad = ciudad;
+  destino.precio = precio;
+  destino.noches = parseInt(document.getElementById(`edit-noches-${id}`).value) || 1;
+  destino.regimen = parseInt(document.getElementById(`edit-regimen-${id}`).value);
+  destino.ganas = parseInt(document.getElementById(`edit-ganas-${id}`).value);
+  destino.enlace = document.getElementById(`edit-enlace-${id}`).value.trim();
+
+  if (ciudadCambiada) {
+    destino.duracionMin = null;
+    destino.transbordos = null;
+  }
+
+  editandoId = null;
+  guardar();
+  render();
+
+  if (ciudadCambiada) {
+    calcularRuta(destino);
+  }
 }
 
 // --- Formulario ---
