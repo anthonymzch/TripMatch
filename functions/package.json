@@ -1,0 +1,13 @@
+{
+  "name": "functions",
+  "description": "Cloud Function que calcula el trayecto en transporte público sin exponer la clave de Google Maps",
+  "engines": {
+    "node": "20"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-functions": "^6.0.1",
+    "cors": "^2.8.5"
+  },
+  "private": true
+}

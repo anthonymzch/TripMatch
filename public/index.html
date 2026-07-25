@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Vía a dos — decidir destino</title>
+  <meta name="description" content="Compara destinos de viaje en pareja por precio, régimen y trayecto en tren.">
+  <meta name="theme-color" content="#14181D">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=Inter:wght@400;500&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <div id="login-gate" class="login-gate">
+    <div class="login-card">
+      <p class="eyebrow">Vía a dos</p>
+      <h1>Decidir destino, juntos</h1>
+      <p class="subtitle" id="login-subtitle">Inicia sesión con Google para ver y editar los destinos.</p>
+      <button type="button" id="btn-login" class="btn-primary">Entrar con Google</button>
+    </div>
+  </div>
+
+  <div class="board" id="board" hidden>
+
+    <header class="board-header">
+      <div class="board-header-top">
+        <div>
+          <p class="eyebrow">Vía a dos</p>
+          <h1>Decidir destino, juntos</h1>
+        </div>
+        <button type="button" id="btn-logout" class="btn-logout">Salir</button>
+      </div>
+      <p class="subtitle">Añade los sitios que estáis mirando y comparadlos por precio, régimen y trayecto.</p>
+    </header>
+
+    <section class="panel" id="panel-origen">
+      <label for="in-origen">Origen del trayecto (tu casa)</label>
+      <input type="text" id="in-origen" placeholder="Calle y ciudad">
+    </section>
+
+    <details class="panel panel-details">
+      <summary>Importancia de cada criterio</summary>
+      <div id="pesos" class="pesos"></div>
+    </details>
+
+    <section class="panel panel-form">
+      <h2>Añadir destino</h2>
+      <div class="form-grid">
+        <input type="text" id="in-nombre" placeholder="Hotel o destino">
+        <input type="text" id="in-ciudad" placeholder="Ciudad o dirección">
+        <input type="number" id="in-precio" placeholder="Precio total (€)">
+        <input type="number" id="in-noches" placeholder="Noches" value="2">
+        <select id="in-regimen">
+          <option value="1">Solo desayuno</option>
+          <option value="2">Media pensión</option>
+          <option value="3">Pensión completa</option>
+        </select>
+        <input type="text" id="in-enlace" placeholder="Enlace de reserva (opcional)">
+      </div>
+      <div class="slider-row">
+        <label>Ganas / ambiente <span id="in-ganas-out">3</span>/5</label>
+        <input type="range" id="in-ganas" min="1" max="5" step="1" value="3">
+      </div>
+      <button type="button" id="btn-add" class="btn-primary">Añadir destino</button>
+    </section>
+
+    <section id="lista" class="lista"></section>
+
+    <p class="footnote">Los destinos se guardan en la nube y los veis los dos.</p>
+
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-init.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
+    }
+  </script>
+</body>
+</html>
