@@ -1,4 +1,4 @@
-const CACHE_NAME = 'via-a-dos-v2';
+const CACHE_NAME = 'via-a-dos-v3';
 
 const APP_SHELL = [
   '/',
@@ -44,19 +44,18 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // App shell: cache-first, con actualización en segundo plano.
+  // App shell: red primero, para no servir código desactualizado tras un
+  // deploy (login, allowlist...). La caché solo se usa como respaldo sin
+  // conexión.
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      const network = fetch(event.request)
-        .then((response) => {
-          if (response && response.status === 200) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          }
-          return response;
-        })
-        .catch(() => cached);
-      return cached || network;
-    })
+    fetch(event.request)
+      .then((response) => {
+        if (response && response.status === 200) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        }
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });

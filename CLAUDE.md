@@ -18,6 +18,13 @@ Ver `README.md` para la puesta en marcha completa.
   **tanto** `ALLOWED_EMAILS` en `firebase-init.js` **como** la lista de
   `firestore.rules` — están duplicadas a propósito (una es UX, la otra
   es seguridad) y deben mantenerse en sync.
+- `public/sw.js` — service worker de la PWA. Usa red-primero (con caché
+  como respaldo sin conexión) precisamente para que un deploy se note
+  al momento en los móviles ya instalados. Si alguna vez se vuelve a
+  una estrategia cache-first, hay que subir `CACHE_NAME` en cada
+  deploy que toque `index.html`/`app.js`/`firebase-init.js`, o los
+  usuarios seguirán viendo código viejo (p.ej. un allowlist de email
+  desactualizado) aunque el deploy haya ido bien.
 
 ## Flujo de trabajo: commit, push y deploy tras cada orden
 
