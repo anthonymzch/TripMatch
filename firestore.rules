@@ -4,7 +4,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
     function esUsuarioPermitido() {
       return request.auth != null &&
-        request.auth.token.email in ['anthony.mendoza300@gmail.com', 'scarlethcc1999@gmail.com'];
+        request.auth.token.email in ['anthony.mendoza300@gmail.com', 'anthony.mzch@gmail.com', 'scarlethcc1999@gmail.com'];
     }
 
     match /viaje/compartido {

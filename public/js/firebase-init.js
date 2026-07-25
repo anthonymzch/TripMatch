@@ -12,7 +12,7 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-const ALLOWED_EMAILS = ['anthony.mendoza300@gmail.com', 'scarlethcc1999@gmail.com'];
+const ALLOWED_EMAILS = ['anthony.mendoza300@gmail.com', 'anthony.mzch@gmail.com', 'scarlethcc1999@gmail.com'];
 
 const auth = firebase.auth();
 const db = firebase.firestore();
