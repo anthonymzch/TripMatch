@@ -303,11 +303,18 @@ const board = document.getElementById('board');
 const loginSubtitle = document.getElementById('login-subtitle');
 
 document.getElementById('btn-login').onclick = function () {
-  loginSubtitle.textContent = 'Inicia sesión con Google para ver y editar los destinos.';
-  auth.signInWithPopup(googleProvider).catch(() => {
-    loginSubtitle.textContent = 'No se pudo iniciar sesión, inténtalo de nuevo.';
-  });
+  loginSubtitle.textContent = 'Redirigiendo a Google…';
+  auth.signInWithRedirect(googleProvider);
 };
+
+// El popup de signInWithPopup falla en Safari/iOS (ITP bloquea el acceso
+// a storage que necesita para devolver la sesión a la página), así que
+// usamos redirect. getRedirectResult solo sirve para capturar el error si
+// algo falla en la vuelta; el login en sí lo recoge onAuthStateChanged.
+auth.getRedirectResult().catch((error) => {
+  console.error('Error de login:', error);
+  loginSubtitle.textContent = 'No se pudo iniciar sesión (' + error.code + '). Inténtalo de nuevo.';
+});
 
 document.getElementById('btn-logout').onclick = function () {
   auth.signOut();
