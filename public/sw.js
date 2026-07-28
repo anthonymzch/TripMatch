@@ -1,4 +1,4 @@
-const CACHE_NAME = 'via-a-dos-v3';
+const CACHE_NAME = 'via-a-dos-v4';
 
 const APP_SHELL = [
   '/',

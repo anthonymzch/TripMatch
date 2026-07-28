@@ -227,15 +227,19 @@ const loginSubtitle = document.getElementById('login-subtitle');
 
 document.getElementById('btn-login').onclick = function () {
   loginSubtitle.textContent = 'Redirigiendo a Google...';
-  auth.signInWithRedirect(googleProvider);
+  auth.signInWithRedirect(googleProvider).catch((err) => {
+    console.error('signInWithRedirect', err);
+    loginSubtitle.textContent = 'Error al redirigir: ' + (err.code || err.message);
+  });
 };
 
 document.getElementById('btn-logout').onclick = function () {
   auth.signOut();
 };
 
-auth.getRedirectResult().catch(() => {
-  loginSubtitle.textContent = 'No se pudo iniciar sesión, inténtalo de nuevo.';
+auth.getRedirectResult().catch((err) => {
+  console.error('getRedirectResult', err);
+  loginSubtitle.textContent = 'No se pudo iniciar sesión (' + (err.code || err.message) + ').';
 });
 
 let suscrito = false;
