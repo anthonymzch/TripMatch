@@ -226,15 +226,17 @@ const board = document.getElementById('board');
 const loginSubtitle = document.getElementById('login-subtitle');
 
 document.getElementById('btn-login').onclick = function () {
-  loginSubtitle.textContent = 'Inicia sesión con Google para ver y editar los destinos.';
-  auth.signInWithPopup(googleProvider).catch(() => {
-    loginSubtitle.textContent = 'No se pudo iniciar sesión, inténtalo de nuevo.';
-  });
+  loginSubtitle.textContent = 'Redirigiendo a Google...';
+  auth.signInWithRedirect(googleProvider);
 };
 
 document.getElementById('btn-logout').onclick = function () {
   auth.signOut();
 };
+
+auth.getRedirectResult().catch(() => {
+  loginSubtitle.textContent = 'No se pudo iniciar sesión, inténtalo de nuevo.';
+});
 
 let suscrito = false;
 
